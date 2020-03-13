@@ -55,9 +55,11 @@ public abstract class AbstractLoadBalance implements LoadBalance {
         if (CollectionUtils.isEmpty(invokers)) {
             return null;
         }
+        // 如果 invokers 列表中仅有一个 Invoker，直接返回即可，无需进行负载均衡
         if (invokers.size() == 1) {
             return invokers.get(0);
         }
+        // 调用 doSelect 方法进行负载均衡，该方法为抽象方法，由子类实现
         return doSelect(invokers, url, invocation);
     }
 
@@ -76,6 +78,7 @@ public abstract class AbstractLoadBalance implements LoadBalance {
         int weight;
         URL url = invoker.getUrl();
         // Multiple registry scenario, load balance among multiple registries.
+        // 从 url 中获取权重 weight 配置值
         if (REGISTRY_SERVICE_REFERENCE_PATH.equals(url.getServiceInterface())) {
             weight = url.getParameter(REGISTRY_KEY + "." + WEIGHT_KEY, DEFAULT_WEIGHT);
         } else {

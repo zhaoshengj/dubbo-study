@@ -36,6 +36,11 @@ public class LeastActiveLoadBalance extends AbstractLoadBalance {
 
     public static final String NAME = "leastactive";
 
+    //遍历 invokers 列表，寻找活跃数最小的 Invoker
+    //如果有多个 Invoker 具有相同的最小活跃数，此时记录下这些 Invoker 在 invokers 集合中的下标，并累加它们的权重，比较它们的权重值是否相等
+    //如果只有一个 Invoker 具有最小的活跃数，此时直接返回该 Invoker 即可
+    //如果有多个 Invoker 具有最小活跃数，且它们的权重不相等，此时处理方式和 RandomLoadBalance 一致
+    //如果有多个 Invoker 具有最小活跃数，但它们的权重相等，此时随机返回一个即可
     @Override
     protected <T> Invoker<T> doSelect(List<Invoker<T>> invokers, URL url, Invocation invocation) {
         // Number of invokers

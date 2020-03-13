@@ -165,12 +165,17 @@ public class HeaderExchangeHandler implements ChannelHandlerDelegate {
     @Override
     public void received(Channel channel, Object message) throws RemotingException {
         final ExchangeChannel exchangeChannel = HeaderExchangeChannel.getOrAddChannel(channel);
+        // 处理请求对象
         if (message instanceof Request) {
             // handle request.
             Request request = (Request) message;
             if (request.isEvent()) {
+                // 处理事件
                 handlerEvent(channel, request);
             } else {
+                // 处理普通的请求
+
+                // 双向通信
                 if (request.isTwoWay()) {
                     handleRequest(exchangeChannel, request);
                 } else {
@@ -178,6 +183,7 @@ public class HeaderExchangeHandler implements ChannelHandlerDelegate {
                 }
             }
         } else if (message instanceof Response) {
+            // 处理响应对象，服务消费方会执行此处逻辑，后面分析
             handleResponse(channel, (Response) message);
         } else if (message instanceof String) {
             if (isClientSide(channel)) {

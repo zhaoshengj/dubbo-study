@@ -77,6 +77,7 @@ public class AdaptiveClassCodeGenerator {
     /**
      * test if given type has at least one method annotated with <code>SPI</code>
      */
+    // 检测方法上是否有 Adaptive 注解
     private boolean hasAdaptiveMethod() {
         return Arrays.stream(type.getMethods()).anyMatch(m -> m.isAnnotationPresent(Adaptive.class));
     }
@@ -87,16 +88,21 @@ public class AdaptiveClassCodeGenerator {
     public String generate() {
         // no need to generate adaptive class since there's no adaptive method found.
         if (!hasAdaptiveMethod()) {
+            // 若所有的方法上均无 Adaptive 注解，则抛出异常
             throw new IllegalStateException("No adaptive method exist on extension " + type.getName() + ", refuse to create the adaptive class!");
         }
 
         StringBuilder code = new StringBuilder();
+        // 生成 package 代码：package + type 所在包
         code.append(generatePackageInfo());
+        // 生成 import 代码：import + ExtensionLoader 全限定名
         code.append(generateImports());
+        // 生成类代码：public class + type简单名称 + $Adaptive + implements + type全限定名 + {
         code.append(generateClassDeclaration());
 
         Method[] methods = type.getMethods();
         for (Method method : methods) {
+            // ${生成方法}
             code.append(generateMethod(method));
         }
         code.append("}");

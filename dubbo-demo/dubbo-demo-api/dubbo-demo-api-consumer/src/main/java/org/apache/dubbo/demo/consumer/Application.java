@@ -26,7 +26,7 @@ import org.apache.dubbo.config.utils.ReferenceConfigCache;
 import org.apache.dubbo.demo.DemoService;
 
 public class Application {
-    public static void main(String[] args) {
+    public static void main(String[] args) throws InterruptedException {
         ReferenceConfig<DemoService> reference = new ReferenceConfig<>();
         reference.setInterface(DemoService.class);
 
@@ -37,7 +37,9 @@ public class Application {
                 .reference(reference)
                 .start();
 
-        String message = ReferenceConfigCache.getCache().get(reference).sayHello("dubbo");
+        String message = ReferenceConfigCache.getCache().get(reference).sayHello("zsj_test_dubbo");
         System.out.println(message);
+
+        //Thread.sleep(100000);
     }
 }

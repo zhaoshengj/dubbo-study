@@ -76,15 +76,20 @@ public abstract class AbstractProxyProtocol extends AbstractProtocol {
     @Override
     @SuppressWarnings("unchecked")
     public <T> Exporter<T> export(final Invoker<T> invoker) throws RpcException {
+        //获得Url对应的serviceKey值。
         final String uri = serviceKey(invoker.getUrl());
+        //根据url获取对应的exporter。
         Exporter<T> exporter = (Exporter<T>) exporterMap.get(uri);
+        //如果已经存在，则直接返回，实现接口支持幂等调用。该处难道无须考虑线程安全问题吗？
         if (exporter != null) {
             // When modifying the configuration through override, you need to re-expose the newly modified service.
             if (Objects.equals(exporter.getInvoker().getUrl(), invoker.getUrl())) {
                 return exporter;
             }
         }
+        //执行抽放方法暴露服务
         final Runnable runnable = doExport(proxyFactory.getProxy(invoker, true), invoker.getInterface(), invoker.getUrl());
+        //调用proxyFactory.getProxy(invoker)来获得invoker的代理对象。
         exporter = new AbstractExporter<T>(invoker) {
             @Override
             public void unexport() {
@@ -105,6 +110,7 @@ public abstract class AbstractProxyProtocol extends AbstractProtocol {
 
     @Override
     protected <T> Invoker<T> protocolBindingRefer(final Class<T> type, final URL url) throws RpcException {
+        //先调用doRefer获得服务服务对象，再调用proxyFactory.getInvoker获得invoker对象。
         final Invoker<T> target = proxyFactory.getInvoker(doRefer(type, url), type, url);
         Invoker<T> invoker = new AbstractInvoker<T>(type, url) {
             @Override

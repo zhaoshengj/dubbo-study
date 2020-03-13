@@ -30,6 +30,7 @@ import java.lang.annotation.Target;
  * @see ExtensionLoader
  * @see URL
  */
+//注入依赖项扩展实例
 @Documented
 @Retention(RetentionPolicy.RUNTIME)
 @Target({ElementType.TYPE, ElementType.METHOD})
@@ -55,6 +56,7 @@ public @interface Adaptive {
      *
      * @return parameter names in URL
      */
+    //确定要注入的目标扩展。目标扩展名由URL中传递的参数决定，参数名称由此方法指定。
     String[] value() default {};
 
 }

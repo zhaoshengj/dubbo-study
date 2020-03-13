@@ -38,6 +38,13 @@ import static org.apache.dubbo.common.constants.CommonConstants.INVOKER_LISTENER
 /**
  * ListenerProtocol
  */
+
+//一个支持监听器特性的Protocal的包装器。支持两种监听器的功能扩展，分别是：
+// ExporterListener是远程服务发布监听器，可以监听服务发布和取消发布两个事件点；
+// InvokerListener是服务消费者引用调用器的监听器，可以监听引用和销毁两个事件方法。
+// 支持可扩展的事件监听模型，
+// 目前只提供了一些适配器InvokerListenerAdapter、ExporterListenerAdapter
+// 以及简单的过期服务调用监听器DeprecatedInvokerListener。开发者可自行扩展自己的监听器。该类源码如下。
 public class ProtocolListenerWrapper implements Protocol {
 
     private final Protocol protocol;

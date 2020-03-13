@@ -46,6 +46,7 @@ public abstract class AbstractProtocol implements Protocol {
 
     protected final Logger logger = LoggerFactory.getLogger(getClass());
 
+    //exporterMap表示发布过的serviceKey和Exporter（远程服务发布的引用）的映射表
     protected final Map<String, Exporter<?>> exporterMap = new ConcurrentHashMap<String, Exporter<?>>();
 
     /**
@@ -53,6 +54,7 @@ public abstract class AbstractProtocol implements Protocol {
      */
     protected final Map<String, ProtocolServer> serverMap = new ConcurrentHashMap<>();
 
+    //invokers是一个Invoker对象的集合，表示层级暴露过远程服务的服务执行体对象集合
     //TODO SoftReference
     protected final Set<Invoker<?>> invokers = new ConcurrentHashSet<Invoker<?>>();
 
@@ -69,6 +71,8 @@ public abstract class AbstractProtocol implements Protocol {
         return Collections.unmodifiableList(new ArrayList<>(serverMap.values()));
     }
 
+    //该方法是一个通用方法，它清空了两个集合属性，调用了所有invoker的destroy方法，
+    // 也调用所有exporter对象的unexport方法。
     @Override
     public void destroy() {
         for (Invoker<?> invoker : invokers) {
